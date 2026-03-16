@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Bio from '../components/Bio.astro';
+import Vault from '../components/Vault.astro';
+import Experience from '../components/Experience.astro';
+import Skills from '../components/Skills.astro';
+import Training from '../components/Training.astro';
+import Certifications from '../components/Certifications.astro';
+---
+
+<Layout title="Srijan Ghosh | Data Engineer & AI Specialist">
+	<Hero />
+
+	<!-- Liquid Sections: Each full-width with distinct color blocks -->
+	<div class="liquid-section bg-[#f0f0ff] dark:bg-[#0f0f23]" id="section-vault">
+		<div class="min-h-screen flex flex-col justify-center py-24 px-6">
+			<div class="max-w-5xl mx-auto w-full">
+				<Vault />
+			</div>
+		</div>
+	</div>
+
+	<div class="liquid-section bg-[#faf5ff] dark:bg-[#150d1e]" id="section-skills">
+		<div class="min-h-screen flex flex-col justify-center py-24 px-6">
+			<div class="max-w-5xl mx-auto w-full">
+				<Skills />
+			</div>
+		</div>
+	</div>
+
+	<div class="liquid-section bg-[#f0fdfa] dark:bg-[#0a1a1a]" id="section-training">
+		<div class="min-h-screen flex flex-col justify-center py-24 px-6">
+			<div class="max-w-5xl mx-auto w-full">
+				<Training />
+			</div>
+		</div>
+	</div>
+
+	<div class="liquid-section bg-[#f8f9fa] dark:bg-[#0a0f1a]" id="section-certifications">
+		<div class="min-h-screen flex flex-col justify-center py-24 px-6">
+			<div class="max-w-5xl mx-auto w-full">
+				<Certifications />
+			</div>
+		</div>
+	</div>
+
+	<div class="liquid-section bg-white dark:bg-[#0a0f1a]" id="section-experience">
+		<div class="min-h-screen flex flex-col justify-center py-24 px-6">
+			<div class="max-w-5xl mx-auto w-full">
+				<Experience />
+			</div>
+		</div>
+	</div>
+</Layout>

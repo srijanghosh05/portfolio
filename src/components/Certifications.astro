@@ -1,0 +1,56 @@
+---
+// Certifications.astro
+const certs = [
+  {
+    org: "Kaggle",
+    title: "Intro to SQL",
+    badge: "Certificate",
+    url: "https://www.kaggle.com/learn/certification/srijanghoshx/intro-to-sql"
+  },
+  {
+    org: "Infosys",
+    title: "Build Generative AI Apps",
+    badge: "Certificate",
+    url: "https://drive.google.com/file/d/1E0CG085oBugEjp9rma_liuN-CQbOZERQ/view?usp=drive_link"
+  },
+  {
+    org: "Infosys",
+    title: "Master Generative AI Tools",
+    badge: "Certificate",
+    url: "https://drive.google.com/file/d/18NQhNGN0IOTk5IUir2UnvUft7C_Zs4vI/view?usp=drive_link"
+  },
+  {
+    org: "Infosys",
+    title: "ChatGPT-4 Prompt Engineering: ChatGPT, Generative AI & LLM",
+    badge: "Certificate",
+    url: "https://drive.google.com/file/d/1jcy9fg4lworjwjhgE5_EV5S1k2jlzgaj/view?usp=drive_link"
+  }
+];
+---
+<section id="certifications" class="space-y-16">
+  <!-- Kinetic Heading -->
+  <div class="overflow-hidden">
+    <h2 class="kinetic-heading text-slate-200 dark:text-gray-800">CERTS</h2>
+  </div>
+  <h3 class="text-2xl font-bold font-jetbrains tracking-tight -mt-8 section-reveal">Certifications & Honors <span class="text-rose-500 dark:text-rose-400">/></span></h3>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {certs.map((cert) => (
+      <div 
+        class="drop-child group relative flex flex-col p-6 rounded-2xl bg-white/50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600"
+      >
+        <div class="flex justify-between items-start mb-4">
+          <span class="text-sm font-semibold text-black dark:text-white uppercase tracking-wider">{cert.org}</span>
+          <a href={cert.url || "#"} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-gray-200 dark:bg-deep-midnight text-xs font-jetbrains text-slate-700 dark:text-gray-400 border border-gray-300 dark:border-gray-700 hover:bg-gray-300 dark:hover:bg-gray-800 transition-colors cursor-pointer group/link">
+            {cert.badge}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 opacity-50 group-hover/link:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+          </a>
+        </div>
+        
+        <h3 class="text-lg font-medium leading-snug text-slate-800 dark:text-gray-200">
+          {cert.title}
+        </h3>
+      </div>
+    ))}
+  </div>
+</section>

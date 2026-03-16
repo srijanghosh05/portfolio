@@ -1,0 +1,176 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth scroll-pt-24">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+
+        <!-- Google Fonts: Inter and JetBrains Mono -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	</head>
+	<body class="font-inter antialiased overflow-x-hidden min-h-screen">
+        <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:flex items-center gap-5 lg:gap-8 px-6 lg:px-8 py-3 rounded-full bg-white/30 dark:bg-data-slate/80 backdrop-blur-xl border border-white/50 dark:border-gray-800 shadow-md">
+            <a href="#vault" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Vault</a>
+            <a href="#skills" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Skills</a>
+            <a href="#training" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Training</a>
+            <a href="#certifications" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Certificates</a>
+            <a href="#experience" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Timeline</a>
+        </nav>
+
+        <div class="fixed top-6 right-6 z-50">
+            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle Dark Mode">
+                <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+
+		<slot />
+
+        <script is:inline>
+            var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            var themeButton = document.getElementById('theme-toggle');
+
+            // Change the icons inside the button based on previous settings
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                themeToggleLightIcon.classList.remove('hidden');
+                document.documentElement.classList.add('dark');
+            } else {
+                themeToggleDarkIcon.classList.remove('hidden');
+                document.documentElement.classList.remove('dark');
+            }
+
+            themeButton.addEventListener('click', function() {
+                themeToggleDarkIcon.classList.toggle('hidden');
+                themeToggleLightIcon.classList.toggle('hidden');
+
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    }
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                }
+            });
+
+            // ==========================================
+            // GSAP ScrollTrigger: Liquid Section Transitions
+            // ==========================================
+            import('https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm').then(async (gsapModule) => {
+                const gsap = gsapModule.gsap || gsapModule.default;
+                const { ScrollTrigger } = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js/+esm');
+                gsap.registerPlugin(ScrollTrigger);
+
+                const snappyEase = "power4.inOut";
+
+                // Apply theme-aware backgrounds
+                const isDark = document.documentElement.classList.contains('dark');
+                document.querySelectorAll('.liquid-section').forEach((section) => {
+                    const bg = isDark ? section.dataset.bgDark : section.dataset.bgLight;
+                    if (bg) section.style.backgroundColor = bg;
+                });
+
+                // Liquid Mask Reveal for each section
+                document.querySelectorAll('.liquid-section').forEach((section) => {
+                    gsap.to(section, {
+                        clipPath: "inset(0% 0% 0% 0% round 0px)",
+                        duration: 1.2,
+                        ease: snappyEase,
+                        scrollTrigger: {
+                            trigger: section,
+                            start: "top 85%",
+                            end: "top 20%",
+                            scrub: 0.5,
+                        }
+                    });
+                });
+
+                // Kinetic Headings: slide in from left with parallax
+                document.querySelectorAll('.kinetic-heading').forEach((heading) => {
+                    gsap.to(heading, {
+                        opacity: 1,
+                        x: 0,
+                        duration: 1,
+                        ease: snappyEase,
+                        scrollTrigger: {
+                            trigger: heading,
+                            start: "top 80%",
+                            end: "top 40%",
+                            scrub: 0.3,
+                        }
+                    });
+                });
+
+                // Drop-in children: cards and content blocks
+                document.querySelectorAll('.drop-child').forEach((child, i) => {
+                    gsap.to(child, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: i * 0.08,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: child,
+                            start: "top 85%",
+                            toggleActions: "play none none none",
+                        }
+                    });
+                });
+
+                // Wipe reveal for timeline items
+                document.querySelectorAll('.wipe-reveal').forEach((el) => {
+                    gsap.to(el, {
+                        clipPath: "inset(0 0% 0 0)",
+                        duration: 0.8,
+                        ease: snappyEase,
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top 95%",
+                            toggleActions: "play none none none",
+                        }
+                    });
+                });
+
+                // Fallback: also activate section-reveal elements
+                document.querySelectorAll('.section-reveal').forEach((el) => {
+                    gsap.to(el, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top 85%",
+                            toggleActions: "play none none none",
+                        }
+                    });
+                });
+            });
+
+        </script>
+	</body>
+</html>

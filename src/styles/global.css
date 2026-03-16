@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-cyber-citrus: #ccff00;
+    --color-data-slate: #1a1a1a;
+    --color-deep-midnight: #0d0d0d;
+
+    --font-inter: "Inter", sans-serif;
+    --font-jetbrains: "JetBrains Mono", monospace;
+}
+
+@layer base {
+    body {
+        @apply bg-white text-gray-900 font-inter antialiased overflow-x-hidden min-h-screen transition-colors duration-300;
+    }
+
+    html.dark body {
+        @apply bg-deep-midnight text-white;
+    }
+}
+
+/* ==========================================
+   LIQUID SECTION TRANSITIONS
+   ========================================== */
+
+/* Full-width section wrapper with clip-path mask */
+.liquid-section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    clip-path: inset(15% 15% 15% 15% round 24px);
+    transition: clip-path 0s;
+}
+
+.liquid-section.revealed {
+    clip-path: inset(0% 0% 0% 0% round 0px);
+}
+
+/* Kinetic heading — oversized, slides in from side */
+.kinetic-heading {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 800;
+    font-size: clamp(3rem, 8vw, 6rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    opacity: 0;
+    transform: translateX(-80px);
+    color: transparent;
+    -webkit-text-stroke: 1.5px currentColor;
+}
+
+.kinetic-heading.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Content that drops in after section reveal */
+.drop-child {
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+.drop-child.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Wipe animation for timeline names */
+.wipe-reveal {
+    clip-path: inset(0 100% 0 0);
+}
+
+.wipe-reveal.active {
+    clip-path: inset(0 0% 0 0);
+}
+
+/* ==========================================
+   GATEWAY REVEAL: IntersectionObserver
+   ========================================== */
+.section-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section-reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-reveal .stagger-child {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section-reveal.active .stagger-child {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ==========================================
+   UTILITY ANIMATIONS
+   ========================================== */
+@keyframes reveal {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-reveal {
+    animation: reveal 0.8s ease-out forwards;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+.typing-cursor::after {
+    content: '|';
+    animation: blink 1s step-start infinite;
+    color: var(--color-cyber-citrus);
+}

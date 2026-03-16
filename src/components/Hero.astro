@@ -1,0 +1,378 @@
+---
+// Hero.astro
+import Bio from './Bio.astro';
+---
+<section id="hero-gateway-track" class="relative h-[300vh] w-full bg-white dark:bg-[#0a0a0a]">
+  <!-- Sticky Window: h-screen, overflow-hidden -->
+  <div class="sticky top-0 h-screen w-full overflow-hidden" id="hero-sticky-window">
+    
+    <!-- Neural Network Grid Background (z-0) -->
+    <canvas id="neural-grid-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
+
+    <!-- Top Layer Name (z-50) -->
+    <div id="layer-top" class="absolute inset-0 flex flex-col items-center justify-center theme-stroke z-50 transform-gpu will-change-transform">
+      <h1 class="font-jetbrains font-bold tracking-tighter text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] whitespace-nowrap">SRIJAN GHOSH</h1>
+      <h2 class="text-lg md:text-2xl font-jetbrains font-medium mt-2 md:mt-3 tracking-wide">Data Engineer & AI Specialist</h2>
+    </div>
+
+    <!-- The Emerging Component: About Me (z-30) -->
+    <div id="layer-emerge" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none transform-gpu opacity-0">
+      <div class="w-full max-w-5xl max-h-[80vh] overflow-y-auto no-scrollbar px-6 md:px-8">
+        <Bio />
+      </div>
+    </div>
+    
+    <!-- Bottom Layer Name (z-10) -->
+    <div id="layer-bottom" class="absolute inset-0 flex flex-col items-center justify-center text-slate-900 dark:text-cyber-citrus z-10 transform-gpu will-change-transform">
+      <h1 class="font-jetbrains font-bold tracking-tighter text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] whitespace-nowrap">SRIJAN GHOSH</h1>
+      <h2 class="text-lg md:text-2xl font-jetbrains font-medium mt-2 md:mt-3 tracking-wide">Data Engineer & AI Specialist</h2>
+    </div>
+
+    <!-- Scroll Hint (z-50) -->
+    <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500 dark:text-gray-500 animate-bounce transition-opacity duration-300 z-50 pointer-events-none" id="layer-hint">
+      <span class="text-sm font-jetbrains uppercase tracking-widest">Scroll to Enter</span>
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  :global(.dark) .theme-stroke {
+    -webkit-text-stroke: 1.5px #CCFF00;
+    color: transparent;
+  }
+  
+  .theme-stroke {
+    -webkit-text-stroke: 1.5px #0f172a;
+    color: transparent;
+  }
+
+  .hero-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+</style>
+
+<script>
+  (() => {
+    /* ==========================================
+       NEURAL NETWORK GRID BACKGROUND
+       ========================================== */
+    const initNeuralGrid = () => {
+      const canvas = document.getElementById('neural-grid-canvas');
+      if (!canvas || !(canvas instanceof HTMLCanvasElement)) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let animationId = 0;
+      let isActive = true;
+      let mouseX = -1000;
+      let mouseY = -1000;
+      const mouseRadius = 300;
+
+      // Node configuration
+      const NODE_COUNT = 80;
+      const CONNECTION_DIST = 160;
+      const nodes = [];
+
+      const resize = () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      };
+
+      class Node {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.baseSpeed = 0.3 + Math.random() * 0.9;
+          const angle = Math.random() * Math.PI * 2;
+          this.vx = Math.cos(angle) * this.baseSpeed;
+          this.vy = Math.sin(angle) * this.baseSpeed;
+          this.radius = Math.random() * 2 + 0.8;
+        }
+
+        update() {
+          // Mouse interaction: ATTRACTION — nodes cluster toward cursor
+          const dx = mouseX - this.x;
+          const dy = mouseY - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < mouseRadius && dist > 30) {
+            const force = Math.pow((mouseRadius - dist) / mouseRadius, 1.5);
+            this.vx += (dx / dist) * force * 2.5;
+            this.vy += (dy / dist) * force * 2.5;
+          } else if (dist <= 30 && dist > 0) {
+            // Soft repel at very close range so they orbit, not collapse
+            this.vx -= (dx / dist) * 0.5;
+            this.vy -= (dy / dist) * 0.5;
+          }
+
+          // Gentle damping but maintain minimum speed for constant drift
+          this.vx *= 0.985;
+          this.vy *= 0.985;
+
+          // Ensure nodes never fully stop — re-inject drift energy
+          const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+          if (speed < this.baseSpeed * 0.5) {
+            const angle = Math.atan2(this.vy, this.vx) + (Math.random() - 0.5) * 0.5;
+            this.vx += Math.cos(angle) * 0.05;
+            this.vy += Math.sin(angle) * 0.05;
+          }
+
+          this.x += this.vx;
+          this.y += this.vy;
+
+          // Bounce off edges with slight randomness
+          if (this.x < 0) { this.x = 0; this.vx = Math.abs(this.vx) * (0.8 + Math.random() * 0.4); }
+          if (this.x > canvas.width) { this.x = canvas.width; this.vx = -Math.abs(this.vx) * (0.8 + Math.random() * 0.4); }
+          if (this.y < 0) { this.y = 0; this.vy = Math.abs(this.vy) * (0.8 + Math.random() * 0.4); }
+          if (this.y > canvas.height) { this.y = canvas.height; this.vy = -Math.abs(this.vy) * (0.8 + Math.random() * 0.4); }
+        }
+      }
+
+      const initNodes = () => {
+        nodes.length = 0;
+        for (let i = 0; i < NODE_COUNT; i++) {
+          nodes.push(new Node());
+        }
+      };
+
+      const getColor = () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        return isDark ? '#CCFF00' : '#0f172a';
+      };
+
+      const draw = () => {
+        if (!isActive) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const color = getColor();
+
+        // Draw connections
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < CONNECTION_DIST) {
+              const opacity = (1 - dist / CONNECTION_DIST) * 0.15;
+              ctx.beginPath();
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.strokeStyle = color;
+              ctx.globalAlpha = opacity;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw mouse glow connections — bold and visible
+        if (mouseX > 0 && mouseY > 0) {
+          for (const node of nodes) {
+            const dx = node.x - mouseX;
+            const dy = node.y - mouseY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < mouseRadius) {
+              const opacity = (1 - dist / mouseRadius) * 0.5;
+              ctx.beginPath();
+              ctx.moveTo(mouseX, mouseY);
+              ctx.lineTo(node.x, node.y);
+              ctx.strokeStyle = color;
+              ctx.globalAlpha = opacity;
+              ctx.lineWidth = 1.2;
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw nodes
+        for (const node of nodes) {
+          node.update();
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.globalAlpha = 0.25;
+          ctx.fill();
+        }
+
+        ctx.globalAlpha = 1;
+        animationId = requestAnimationFrame(draw);
+      };
+
+      // Mouse tracking (only when Hero is in view)
+      const onMouseMove = (e) => {
+        if (!isActive) return;
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      };
+
+      const onMouseLeave = () => {
+        mouseX = -1000;
+        mouseY = -1000;
+      };
+
+      // Visibility observer: stop animation when Hero leaves viewport
+      const visObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            isActive = true;
+            draw();
+          } else {
+            isActive = false;
+            cancelAnimationFrame(animationId);
+          }
+        });
+      }, { threshold: 0 });
+
+      resize();
+      initNodes();
+      visObserver.observe(canvas);
+      canvas.addEventListener('mousemove', onMouseMove);
+      canvas.addEventListener('mouseleave', onMouseLeave);
+      window.addEventListener('resize', () => { resize(); initNodes(); });
+      draw();
+
+      // Expose a method for the scroll handler to control canvas opacity
+      window._neuralGridCanvas = canvas;
+    };
+
+    /* ==========================================
+       GATEWAY SCROLL ANIMATION
+       ========================================== */
+    const initGatewayScroll = () => {
+      const track = document.getElementById('hero-gateway-track');
+      const stickyWindow = document.getElementById('hero-sticky-window');
+      const topName = document.getElementById('layer-top');
+      const bottomName = document.getElementById('layer-bottom');
+      const emergeComp = document.getElementById('layer-emerge');
+      const hint = document.getElementById('layer-hint');
+      const neuralCanvas = window._neuralGridCanvas;
+
+      if (!track || !stickyWindow || !topName || !bottomName || !emergeComp) return;
+
+      let ticking = false;
+
+      const handleScroll = () => {
+        const rect = track.getBoundingClientRect();
+        const winHeight = window.innerHeight;
+        
+        let progress = 0;
+        if (rect.top <= 0) {
+          const maxScroll = rect.height - winHeight;
+          progress = Math.max(0, Math.min(1, Math.abs(rect.top) / maxScroll));
+        }
+
+        /* 
+           Phase 1: 0% to 40% — The Split
+        */
+        const splitProg = Math.min(1, progress / 0.4);
+        const splitEaseOut = 1 - Math.pow(1 - splitProg, 3);
+        const splitDist = winHeight * 0.45;
+        
+        topName.style.transform = `translateY(-${splitEaseOut * splitDist}px)`;
+        bottomName.style.transform = `translateY(${splitEaseOut * splitDist}px)`;
+
+        // Fade hint immediately
+        if (hint) {
+           hint.style.opacity = Math.max(0, 1 - progress * 8).toString();
+        }
+
+        /* 
+           Neural Grid Opacity: visible 0-60%, fades 60-100%
+        */
+        if (neuralCanvas) {
+          if (progress <= 0.6) {
+            neuralCanvas.style.opacity = '1';
+          } else {
+            const gridFade = (progress - 0.6) / 0.4;
+            neuralCanvas.style.opacity = Math.max(0, 1 - gridFade).toString();
+          }
+        }
+
+        /* 
+           Name Fade Out: 30% to 50%
+        */
+        if (progress >= 0.3) {
+          const nameFade = Math.min(1, (progress - 0.3) / 0.2);
+          topName.style.opacity = (1 - nameFade).toString();
+          bottomName.style.opacity = (1 - nameFade).toString();
+          topName.style.pointerEvents = 'none';
+          bottomName.style.pointerEvents = 'none';
+        } else {
+          topName.style.opacity = '1';
+          bottomName.style.opacity = '1';
+          topName.style.pointerEvents = 'auto';
+          bottomName.style.pointerEvents = 'auto';
+        }
+
+        /* 
+           Phase 2: 40% to 70% — The Reveal
+        */
+        if (progress >= 0.4 && progress <= 0.7) {
+          const emergeProg = (progress - 0.4) / 0.3;
+          emergeComp.style.opacity = emergeProg.toString();
+          emergeComp.style.transform = `scale(${0.9 + 0.1 * emergeProg})`;
+          emergeComp.classList.remove('pointer-events-none');
+        } else if (progress < 0.4) {
+          emergeComp.style.opacity = '0';
+          emergeComp.style.transform = 'scale(0.9)';
+          emergeComp.classList.add('pointer-events-none');
+        } else {
+          emergeComp.style.opacity = '1';
+          emergeComp.style.transform = 'scale(1.0)';
+          emergeComp.classList.remove('pointer-events-none');
+        }
+
+        /* 
+           Phase 3: 70% to 100% — The Fade Out
+        */
+        if (progress >= 0.7) {
+          const fadeOutProg = (progress - 0.7) / 0.3;
+          stickyWindow.style.opacity = Math.max(0, 1 - fadeOutProg).toString();
+
+          if (progress >= 0.99) {
+             stickyWindow.classList.add('hero-hidden');
+          } else {
+             stickyWindow.classList.remove('hero-hidden');
+          }
+        } else {
+          stickyWindow.style.opacity = '1';
+          stickyWindow.classList.remove('hero-hidden');
+        }
+      };
+
+      const onScroll = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      
+      handleScroll();
+    };
+
+    /* ==========================================
+       INITIALIZATION
+       ========================================== */
+    const init = () => {
+      initNeuralGrid();
+      initGatewayScroll();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
