@@ -9,7 +9,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth scroll-pt-24">
+<html lang="en" class="scroll-smooth">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -17,18 +17,21 @@ const { title } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-        <!-- Google Fonts: Inter and JetBrains Mono -->
+        <!-- Google Fonts: Inter, JetBrains Mono, Anton -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 	</head>
 	<body class="font-inter antialiased overflow-x-hidden min-h-screen">
+        <!-- Film Grain Overlay -->
+        <div class="film-grain" aria-hidden="true"></div>
+
         <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:flex items-center gap-5 lg:gap-8 px-6 lg:px-8 py-3 rounded-full bg-white/30 dark:bg-data-slate/80 backdrop-blur-xl border border-white/50 dark:border-gray-800 shadow-md">
             <a href="#vault" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Vault</a>
+            <a href="#experience" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Timeline</a>
             <a href="#skills" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Skills</a>
             <a href="#training" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Training</a>
             <a href="#certifications" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Certificates</a>
-            <a href="#experience" class="text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors no-underline">Timeline</a>
         </nav>
 
         <div class="fixed top-6 right-6 z-50">
@@ -45,7 +48,6 @@ const { title } = Astro.props;
             var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
             var themeButton = document.getElementById('theme-toggle');
 
-            // Change the icons inside the button based on previous settings
             if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 themeToggleLightIcon.classList.remove('hidden');
                 document.documentElement.classList.add('dark');
@@ -78,84 +80,110 @@ const { title } = Astro.props;
             });
 
             // ==========================================
-            // GSAP ScrollTrigger: Liquid Section Transitions
+            // GSAP: Cinematic Kinetic Transitions
             // ==========================================
             import('https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm').then(async (gsapModule) => {
                 const gsap = gsapModule.gsap || gsapModule.default;
                 const { ScrollTrigger } = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js/+esm');
                 gsap.registerPlugin(ScrollTrigger);
 
-                const snappyEase = "power4.inOut";
+                const snap = "power4.inOut";
 
-                // Apply theme-aware backgrounds
-                const isDark = document.documentElement.classList.contains('dark');
-                document.querySelectorAll('.liquid-section').forEach((section) => {
-                    const bg = isDark ? section.dataset.bgDark : section.dataset.bgLight;
-                    if (bg) section.style.backgroundColor = bg;
-                });
-
-                // Liquid Mask Reveal for each section
+                // Hard-cut liquid mask reveal
                 document.querySelectorAll('.liquid-section').forEach((section) => {
                     gsap.to(section, {
                         clipPath: "inset(0% 0% 0% 0% round 0px)",
-                        duration: 1.2,
-                        ease: snappyEase,
+                        duration: 0.6,
+                        ease: snap,
                         scrollTrigger: {
                             trigger: section,
-                            start: "top 85%",
-                            end: "top 20%",
-                            scrub: 0.5,
-                        }
-                    });
-                });
-
-                // Kinetic Headings: slide in from left with parallax
-                document.querySelectorAll('.kinetic-heading').forEach((heading) => {
-                    gsap.to(heading, {
-                        opacity: 1,
-                        x: 0,
-                        duration: 1,
-                        ease: snappyEase,
-                        scrollTrigger: {
-                            trigger: heading,
-                            start: "top 80%",
-                            end: "top 40%",
+                            start: "top 90%",
+                            end: "top 30%",
                             scrub: 0.3,
                         }
                     });
                 });
 
-                // Drop-in children: cards and content blocks
-                document.querySelectorAll('.drop-child').forEach((child, i) => {
-                    gsap.to(child, {
+                // Kinetic headings: slow horizontal parallax drift
+                document.querySelectorAll('.kinetic-heading').forEach((heading) => {
+                    gsap.fromTo(heading,
+                        { x: -200 },
+                        {
+                            x: 100,
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: heading.closest('.liquid-section') || heading,
+                                start: "top bottom",
+                                end: "bottom top",
+                                scrub: true,
+                            }
+                        }
+                    );
+                });
+
+                // Chromatic pop-in cards
+                document.querySelectorAll('.chromatic-pop').forEach((card) => {
+                    gsap.to(card, {
                         opacity: 1,
                         y: 0,
-                        duration: 0.8,
-                        delay: i * 0.08,
-                        ease: "power3.out",
+                        scale: 1,
+                        duration: 0.6,
+                        ease: "back.out(1.4)",
                         scrollTrigger: {
-                            trigger: child,
+                            trigger: card,
                             start: "top 85%",
                             toggleActions: "play none none none",
                         }
                     });
                 });
 
-                // Wipe reveal for timeline items
-                document.querySelectorAll('.wipe-reveal').forEach((el) => {
-                    gsap.to(el, {
-                        clipPath: "inset(0 0% 0 0)",
-                        duration: 0.8,
-                        ease: snappyEase,
+                // Drop-in children
+                document.querySelectorAll('.drop-child').forEach((child) => {
+                    gsap.to(child, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.7,
+                        ease: "power3.out",
                         scrollTrigger: {
-                            trigger: el,
-                            start: "top 95%",
+                            trigger: child,
+                            start: "top 88%",
                             toggleActions: "play none none none",
                         }
                     });
                 });
 
-                // Fallback: also activate section-reveal elements
+                // Wipe reveal
+                document.querySelectorAll('.wipe-reveal').forEach((el) => {
+                    gsap.to(el, {
+                        clipPath: "inset(0 0% 0 0)",
+                        duration: 0.7,
+                        ease: snap,
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top 85%",
+                            toggleActions: "play none none none",
+                        }
+                    });
+                });
+
+                // Drifting year markers: slow vertical parallax
+                document.querySelectorAll('.drift-year').forEach((year) => {
+                    gsap.fromTo(year,
+                        { y: 60 },
+                        {
+                            y: -60,
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: year.closest('.liquid-section') || year,
+                                start: "top bottom",
+                                end: "bottom top",
+                                scrub: true,
+                            }
+                        }
+                    );
+                });
+
+                // Section reveal fallback
                 document.querySelectorAll('.section-reveal').forEach((el) => {
                     gsap.to(el, {
                         opacity: 1,
@@ -169,6 +197,17 @@ const { title } = Astro.props;
                         }
                     });
                 });
+
+                // Glitch-in trigger for Bio
+                const bioEl = document.querySelector('.glitch-trigger');
+                if (bioEl) {
+                    ScrollTrigger.create({
+                        trigger: bioEl,
+                        start: "top 70%",
+                        onEnter: () => bioEl.classList.add('glitch-in'),
+                        once: true,
+                    });
+                }
             });
 
         </script>

@@ -6,20 +6,19 @@ const skills = {
   "Cloud & Tools": ["AWS (EC2, RDS)", "PostgreSQL", "REST APIs", "GitHub"]
 };
 ---
-<section id="skills" class="space-y-16">
-  <!-- Kinetic Heading -->
-  <div class="overflow-hidden">
-    <h2 class="kinetic-heading text-slate-200 dark:text-gray-800">ARSENAL</h2>
-  </div>
-  <h3 class="text-2xl font-bold font-jetbrains tracking-tight -mt-8 section-reveal">Technical Stack <span class="text-violet-500 dark:text-violet-400">/></span></h3>
+<section id="skills" class="relative space-y-16">
+  <!-- Drifting Background Title -->
+  <div class="kinetic-heading text-gray-200 dark:text-white/[0.04] absolute -top-8 left-0">SKILLS</div>
+
+  <h3 class="text-2xl font-bold font-jetbrains tracking-tight section-reveal relative z-10">Technical Stack <span class="text-red-600 dark:text-red-500">/></span></h3>
   
-  <div class="space-y-10">
+  <div class="space-y-10 relative z-10">
     {Object.entries(skills).map(([category, items]) => (
       <div class="drop-child">
         <h3 class="text-lg font-semibold text-slate-800 dark:text-gray-300 mb-4">{category}</h3>
         <div class="flex flex-wrap gap-3">
           {items.map(item => (
-            <div class="px-4 py-2 rounded-full bg-white/50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-gray-800 text-sm font-medium text-slate-900 dark:text-violet-300 transition-all hover:-translate-y-1 hover:shadow-md dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)] dark:hover:border-violet-500/40">
+            <div class="px-4 py-2 rounded-full bg-white dark:bg-[#111111] border border-gray-200 dark:border-gray-800 text-sm font-medium text-slate-900 dark:text-gray-200 transition-all hover:-translate-y-1 hover:shadow-md dark:hover:shadow-[0_0_12px_rgba(220,38,38,0.08)] dark:hover:border-red-900/40">
               {item}
             </div>
           ))}
